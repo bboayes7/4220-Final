@@ -73,6 +73,24 @@ module.exports = (server) => {
             projects[data.ProjectID].todos.push(todo);
             io.emit('refresh-projects', projects)
         })
+        
+        socket.on('edit-todo', editedTodo => {
+            pid=editedTodo.ProjectID
+            todoid= editedTodo.ProjectID.id
+
+
+            this.projects.pid.todoid.name = editedTodo.name
+            this.projects.pid.todoid.description = editedTodo.description
+            this.projects.pid.todoid.startdate = editedTodo.startdate
+            this.projects.pid.todoid.finishdate = editedTodo.finishdate
+            this.projects.pid.todoid.todos = editedTodo.todos
+            this.projects.pid.todoid.writteny = editedTodo.writtenby
+            this.projects.pid.todoid.finishedby = editedTodo.finishedby
+            this.projects.pid.todoid.completed = editedTodo.complete
+
+            io.emit('refresh-projects', projects)
+        })
+        
 
         socket.on('disconnect', () => {
             users = users.filter(user => {
