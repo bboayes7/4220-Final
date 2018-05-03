@@ -65,6 +65,9 @@ const app = new Vue({
                 return
 
             socket.emit('send-todo', { ProjectID: this.ProjectID,TodoName: this.TodoName,TodoDes: this.TodoDes,userName:this.userName })
+        },
+        editToDo: function(){
+            socket.emit('edit-todo', editedTodo)
         }
     },
     components: {
