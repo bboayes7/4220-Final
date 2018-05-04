@@ -1,15 +1,16 @@
 // Chat Component
 const chatComponent = {
-    template: ` <div class="chat-box">
+    template: ` <div>
                    <p v-for="data in content">
-                   <span><strong>{{data.id}}</strong> <small>{{data.name}}</small><span>
+                   <span><strong>Project Id - {{data.id}} Project Name - {{data.name}}</strong><span>
                        <br />
-                       {{data.todos}}
-                   </p>
+                   {{data.todos}} 
+                       <br />
+                       </p>
+                   
                </div>`,
     props: ['content']
 }
-
 // Users Component
 const usersComponent = {
     template: ` <div class="user-list">
@@ -39,9 +40,11 @@ const app = new Vue({
         users: [],
         ProjectName: '',
         projects: [],
-        ProjectID:"",
-        TodoName:"",
-        TodoDes:""
+        ProjectID: "",
+        TodoName: "",
+        TodoDes: "",
+        Todoid: ""
+
     },
     methods: {
         joinUser: function () {
@@ -56,7 +59,7 @@ const app = new Vue({
 
             socket.emit('send-projects', { ProjectName: this.ProjectName })
         },
-        sendToDO: function () {
+        sendToDo: function () {
             if (!this.ProjectID)
                 return
             if (!this.TodoName)
@@ -64,7 +67,33 @@ const app = new Vue({
             if (!this.TodoDes)
                 return
 
-            socket.emit('send-todo', { ProjectID: this.ProjectID,TodoName: this.TodoName,TodoDes: this.TodoDes,userName:this.userName })
+            socket.emit('send-todo', { ProjectID: this.ProjectID, TodoName: this.TodoName, TodoDes: this.TodoDes, userName: this.userName })
+        },
+        DeleteProject: function () {
+            if (!this.ProjectID)
+                return
+
+            socket.emit('delete-project', { ProjectID: this.ProjectID })
+        },
+        DeleteToDo: function () {
+            console.log(`Project ID: ${this.ProjectID} \n Todo ID: ${this.Todoid}`)
+            if (!this.ProjectID)
+                return
+            if (!this.Todoid)
+                return
+
+            socket.emit('delete-todo', { ProjectID: this.ProjectID, Todoid: this.Todoid })
+        },
+        EditToDo: function () {
+            if (!this.ProjectID)
+                return
+            if (!this.Todoid)
+                return
+            if (!this.TodoName)
+                return
+            if (!this.TodoDes)
+                return
+            socket.emit('edit-todo', { ProjectID: this.ProjectID, Todoid: this.Todoid, TodoName: this.TodoName, TodoDes: this.TodoDes })
         }
     },
     components: {
@@ -79,6 +108,7 @@ const app = new Vue({
 socket.on('refresh-projects', projects => {
     app.projects = projects
 })
+
 socket.on('refresh-users', users => {
     app.users = users
 })
@@ -96,11 +126,10 @@ socket.on('successful-join', user => {
     app.users.push(user)
 })
 socket.on('failed-join', flag => {
-    if(app.loggedIn == false)
-    {
+    if (app.loggedIn == false) {
         app.Faillogin = flag
     }
-    
+
 })
 
 socket.on('successful-project', content => {
