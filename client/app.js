@@ -2,7 +2,9 @@
 const chatComponent = {
     template: ` <div class="chat-box">
                    <p v-for="data in content">
-                   <span><strong>{{data.id}}</strong> <small>{{data.name}}</small><span>
+                   <span><strong>Project ID: {{data.id}}</strong>
+                   <br />
+                   <strong>Project Name :{{data.name}}</strong><span>
                        <br />
                        {{data.todos}}
                    </p>
@@ -41,7 +43,9 @@ const app = new Vue({
         projects: [],
         ProjectID:"",
         TodoName:"",
-        TodoDes:""
+        TodoDes:"",
+        Todoid:""
+
     },
     methods: {
         joinUser: function () {
@@ -65,6 +69,31 @@ const app = new Vue({
                 return
 
             socket.emit('send-todo', { ProjectID: this.ProjectID,TodoName: this.TodoName,TodoDes: this.TodoDes,userName:this.userName })
+        },
+        DeleteProject: function () {
+            if (!this.ProjectID)
+                return
+
+            socket.emit('delete-project', { ProjectID: this.ProjectID })
+        },
+        DeletToDO: function () {
+            if (!this.ProjectID)
+                return
+            if (!this.Todoid)
+                return
+
+            socket.emit('delete-todo', { ProjectID: this.ProjectID,Todoid: this.Todoid })
+        },
+        EditToDO: function () {
+            if (!this.ProjectID)
+                return
+            if (!this.Todoid)
+                return
+            if (!this.TodoName)
+                return
+            if (!this.TodoDes)
+                return
+            socket.emit('edit-todo', { ProjectID: this.ProjectID,Todoid: this.Todoid,TodoName: this.TodoName,TodoDes: this.TodoDes })
         }
     },
     components: {

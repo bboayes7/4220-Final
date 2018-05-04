@@ -68,11 +68,18 @@
                </button>
 
                <input v-model="ProjectID" placeholder="write ProjectID" type="text" class="u-full-width">
+               <input v-model="Todoid" placeholder="write Todoid" type="text" class="u-full-width">
+
                <input v-model="TodoName" placeholder="write TodoName" type="text" class="u-full-width">
                <input v-model="TodoDes" placeholder="write TodoDes" type="text" class="u-full-width">
 
                
                     <button v-on:click="sendToDO">add to do to {{ProjectID}}</button> 
+                    <button v-on:click="DeleteProject">DeleteProject</button> 
+                    <button v-on:click="DeletToDO">Delete to do</button> 
+                    <button v-on:click="EditToDO">Edit to do</button> 
+
+
             </div>
             <!-- end form to send new message to chat box -->
                   
