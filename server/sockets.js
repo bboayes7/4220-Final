@@ -5,8 +5,8 @@ module.exports = (server) => {
 
     let users = []
     let projects = []
-    const ToDoArchive = []
-    let ProjectsCounter = 0;//id for projects
+    const todoArchive = []
+    let projectsCounter = 0;//id for projects
 
     // when the page is loaded in the browser the connection event is fired
     io.on('connection', socket => {
@@ -34,8 +34,7 @@ module.exports = (server) => {
             else{
                 const user = {
                 id: socket.id,
-                name: userName,
-                avater:`https://robohash.org/${userName}?set=set3`
+                name: userName
             }
             users.push(user)
             io.emit('successful-join', user)
@@ -44,72 +43,75 @@ module.exports = (server) => {
         })
         //on adding a project to server
         socket.on('send-projects', data => {
+            console.log(`data : ${data.projectName}`)
             const project = {
-                id: ProjectsCounter,
-                name: data.ProjectName,
+                id: projectsCounter,
+                name: data.projectName,
                 date: moment(new Date()).format('MM/DD/YY h:mm a'),
                 todos: [],
-                ToDoIdCounter:0 //To Do task id counter 
+                toDoIdCounter:0 //To Do task id counter 
             }
-            ProjectsCounter++;
+            console.log(`project : ${project.id} & ${project.name} & ${project.date} & ${project.todos} &  ${project.toDoIdCounter}`);
+            projectsCounter++;
             projects.push(project)
             io.emit('successful-project', project)
         })
         //on adding a task to project. needs ProjectID, name for task, description for task and user name.
         socket.on('send-todo', data => {
-            const projectindex = projects.findIndex(project =>{
-                return project.id == data.ProjectID})
+            console.log(`hi this is send-todo and your data is ${data.todoName} & ${data.todoDes}`)
+            const projectIndex = projects.findIndex(project =>{
+                return project.id == data.projectId})
             const todo = {
-                ProjectID: data.ProjectID,
-                id: projects[projectindex].ToDoIdCounter,
-                name: data.TodoName,
-                description:data.TodoDes,
-                startdate: moment(new Date()).format('MM/DD/YY h:mm a'),
-                finishdate: "",
-                writtenby:data.userName,
-                finishedby:"",
+                projectId: data.projectId,
+                id: projects[projectIndex].toDoIdCounter,
+                name: data.todoName,
+                description:data.todoDes,
+                startDate: moment(new Date()).format('MM/DD/YY h:mm a'),
+                finishDate: "",
+                writtenBy: data.userName,
+                finishedBy:"",
                 completed: false
 
             }
            
-            projects[projectindex].ToDoIdCounter++;
-            projects[projectindex].todos.push(todo);
+            projects[projectIndex].toDoIdCounter++;
+            projects[projectIndex].todos.push(todo);
             io.emit('refresh-projects', projects)
         })
         socket.on('delete-project', data => {
-            const projectindex = projects.findIndex(project =>{
-                return project.id == data.ProjectID})
+            const projectIndex = projects.findIndex(project =>{
+                return project.id == data.projectId})
             
-            delete projects[projectindex]
+            delete projects[projectIndex]
             projects = projects.filter(function (n) { return n != undefined });
 
             io.emit('refresh-projects', projects)
         })
         socket.on('delete-todo', data => {
-            const projectindex = projects.findIndex(project =>{
-                return project.id == data.ProjectID})
-            const todoindex = projects[projectindex].todos.findIndex(todo =>{
-                    return todo.id == data.Todoid})
-            delete  projects[projectindex].todos[todoindex]
-           projects[projectindex].todos= projects[projectindex].todos.filter(function (n) { return n != undefined });
+            const projectIndex = projects.findIndex(project =>{
+                return project.id == data.projectId})
+            const todoIndex = projects[projectIndex].todos.findIndex(todo =>{
+                    return todo.id == data.todoId})
+            delete  projects[projectIndex].todos[todoIndex]
+           projects[projectIndex].todos= projects[projectIndex].todos.filter(function (n) { return n != undefined });
            io.emit('refresh-projects', projects)
         })
         socket.on('edit-todo', data => {
-            const projectindex = projects.findIndex(project =>{
-                return project.id == data.ProjectID})
-            const todoindex = projects[projectindex].todos.findIndex(todo =>{
-                    return todo.id == data.Todoid})
-              projects[projectindex].todos[todoindex].name = data.TodoName
-              projects[projectindex].todos[todoindex].description = data.TodoDes
+            const projectIndex = projects.findIndex(project =>{
+                return project.id == data.projectId})
+            const todoIndex = projects[projectIndex].todos.findIndex(todo =>{
+                    return todo.id == data.todoId})
+              projects[projectIndex].todos[todoIndex].name = data.todoName
+              projects[projectIndex].todos[todoIndex].description = data.todoDes
 
            io.emit('refresh-projects', projects)
         })
         socket.on('toggle-todo', data => {
-            const projectindex = projects.findIndex(project =>{
-                return project.id == data.ProjectID})
-            const todoindex = projects[projectindex].todos.findIndex(todo =>{
-                    return todo.id == data.Todoid})
-              projects[projectindex].todos[todoindex].completed = data.flag
+            const projectIndex = projects.findIndex(project =>{
+                return project.id == data.projectId})
+            const todoIndex = projects[projectIndex].todos.findIndex(todo =>{
+                    return todo.id == data.todoId})
+              projects[projectIndex].todos[todoIndex].completed = data.flag
 
            io.emit('refresh-projects', projects)
         })
