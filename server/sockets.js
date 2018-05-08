@@ -18,7 +18,7 @@ module.exports = (server) => {
         socket.emit('refresh-projects', projects)
         socket.emit('refresh-users', users)
         socket.emit('refresh-todoArchive', todoArchive)
-=
+        
         //on logging in to the server
         socket.on('join-user', userName => {
             let flag = false

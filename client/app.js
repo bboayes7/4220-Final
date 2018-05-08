@@ -1,15 +1,28 @@
-const chatComponent = {
-    template: ` <div class="chat-box">
-                   <p v-for="data in content">
-                   <span><strong>Project ID: {{data.id}}</strong>
-                   <br />
-                   <strong>Project Name :{{data.name}}</strong><span>
-                       <br />
-                       {{data.todos}}
-                   </p>
-               </div>`,
+const projectComponent = {
+    template: ` 
+    <div class="container">
+        <div class="card" v-for="data in content">
+            <div class="card-body">
+                <div class="card-header">
+                    <h3>
+                        {{data.id}}
+                        <strong>{{data.name}}</strong>
+                    </h3>
+                </div>
+                <ul class="list-group">
+                    <div v-for="todo in data.todos">
+                       <li class="list-group-item">{{todo.id}} {{todo.name}}</li>
+                    </div> 
+                </ul>
+            </div>
+        </div>
+    </div>`,
     props: ['content']
 }
+
+
+
+
 
 const socket = io()
 const app = new Vue({
@@ -79,7 +92,7 @@ const app = new Vue({
         }
     },
     components: {
-        chatComponent
+        projectComponent
     }
 })
 
