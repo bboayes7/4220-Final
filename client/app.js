@@ -1,4 +1,3 @@
-// Chat Component
 const chatComponent = {
     template: ` <div class="chat-box">
                    <p v-for="data in content">
@@ -12,39 +11,21 @@ const chatComponent = {
     props: ['content']
 }
 
-// Users Component
-const usersComponent = {
-    template: ` <div class="user-list">
-                   <h6>Active Users ({{users.length}})</h6>
-                   <ul v-for="user in users">
-                       <li>
-                       <img v-bind:src="user.avater" class="circle" width="30px">
-                       <span>{{user.name}}</span>
-                       </li>
-                       <hr>
-                   </ul>
-               </div>`,
-    props: ['users']
-}
-
-
-
-
 const socket = io()
 const app = new Vue({
-    el: '#chat-app',
+    el: '#todo-app',
     data: {
         loggedIn: false,
-        Faillogin: false,
+        failLogin: false,
         userName: '',
         user: {},
         users: [],
-        ProjectName: '',
+        projectName: '',
         projects: [],
-        ProjectID:"",
-        TodoName:"",
-        TodoDes:"",
-        Todoid:""
+        projectId: "",
+        todoName: "",
+        todoDes: "",
+        todoId: ""
 
     },
     methods: {
@@ -55,51 +36,50 @@ const app = new Vue({
             socket.emit('join-user', this.userName)
         },
         sendProject: function () {
-            if (!this.ProjectName)
+            console.log(`projectname : ${this.projectName}`)
+            if (!this.projectName)
                 return
 
-            socket.emit('send-projects', { ProjectName: this.ProjectName })
+            socket.emit('send-projects', { projectName: this.projectName })
         },
-        sendToDO: function () {
-            if (!this.ProjectID)
+        sendToDo: function () {
+            if (!this.projectId)
                 return
-            if (!this.TodoName)
+            if (!this.todoName)
                 return
-            if (!this.TodoDes)
+            if (!this.todoDes)
                 return
 
-            socket.emit('send-todo', { ProjectID: this.ProjectID,TodoName: this.TodoName,TodoDes: this.TodoDes,userName:this.userName })
+            socket.emit('send-todo', { projectId: this.projectId, todoName: this.todoName, todoDes: this.todoDes, userName: this.userName })
         },
-        DeleteProject: function () {
-            if (!this.ProjectID)
+        deleteProject: function () {
+            if (!this.projectId)
                 return
 
-            socket.emit('delete-project', { ProjectID: this.ProjectID })
+            socket.emit('delete-project', { projectId: this.projectId })
         },
-        DeletToDO: function () {
-            if (!this.ProjectID)
+        deleteToDo: function () {
+            if (!this.projectId)
                 return
-            if (!this.Todoid)
+            if (!this.todoId)
                 return
 
-            socket.emit('delete-todo', { ProjectID: this.ProjectID,Todoid: this.Todoid })
+            socket.emit('delete-todo', { projectId: this.projectId, todoId: this.todoId })
         },
-        EditToDO: function () {
-            if (!this.ProjectID)
+        editToDo: function () {
+            if (!this.projectId)
                 return
-            if (!this.Todoid)
+            if (!this.todoId)
                 return
-            if (!this.TodoName)
+            if (!this.todoName)
                 return
-            if (!this.TodoDes)
+            if (!this.todoDes)
                 return
-            socket.emit('edit-todo', { ProjectID: this.ProjectID,Todoid: this.Todoid,TodoName: this.TodoName,TodoDes: this.TodoDes })
+            socket.emit('edit-todo', { projectId: this.projectId, todoId: this.todoId, todoName: this.todoName, todoDes: this.todoDes })
         }
     },
     components: {
-        'users-component': usersComponent,
-        'chat-component': chatComponent,
-
+        chatComponent
     }
 })
 
@@ -118,22 +98,21 @@ socket.on('successful-join', user => {
     if (user.name === app.userName) {
         app.user = user
         app.loggedIn = true
-        app.Faillogin = false
+        app.failLogin = false
 
     }
 
     app.users.push(user)
 })
 socket.on('failed-join', flag => {
-    if(app.loggedIn == false)
-    {
-        app.Faillogin = flag
+    if (app.loggedIn == false) {
+        app.failLogin = flag
     }
-    
+
 })
 
 socket.on('successful-project', content => {
     // clear the message after success send
-    app.ProjectName = ''
+    app.projectName = ''
     app.projects.push(content)
 })

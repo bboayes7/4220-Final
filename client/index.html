@@ -2,103 +2,62 @@
 <html lang="en">
 
 <head>
-   <meta charset="UTF-8">
-   <title>Chat App</title>
+    <meta charset="UTF-8">
+    <title> TO DO LIST</title>
 
-   <link rel="shortcut icon" href="img/favicon-chat.png" />
-   <!-- Import Google Fonts -->
-   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-   <link href="https://fonts.googleapis.com/css?family=Rajdhani:400,700" rel="stylesheet">
-   <!-- Import materialize.css -->
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
-   <!-- Import custom css -->
-   <link rel="stylesheet" href="css/style.css">
-
-   <style>
-      [v-cloak] {
-         display: none;
-      }
-   </style>
+    <link rel="shortcut icon" href="img/favicon-chat.png" />
+    <!-- Import Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
-        
-   <div id="chat-app">
-      <div class="row">
-            <!-- Welcome component-->
-
-         <!-- users column -->
-         <div class="col s3">
-
-            <!-- Welcome component-->
-           
-                    <users-component v-bind:users="users"></users-component>
-           
-                </div>
-            <!-- active users component-->
-            <div class="user-error" v-show="Faillogin">
-
-                <p>User Name exists already.</p>
-            
-             </div>
-            <!-- start user join -->
-            <div class="user-login" v-show="!loggedIn">
-               <input v-model="userName" placeholder="name" type="text" class="u-full-width">
-               <button v-on:click="joinUser" :disabled="!userName" class="btn-small waves-effect waves-light" type="submit">
-                  Join
-               </button>
-
-
-            </div>
-            <!-- end user join -->
-
-
-         <!-- message box column-->
-         <div class="col s9" v-show="loggedIn">
-
-            <!-- chat box -->
+    <div id="todo-app">
+        <div>
             <chat-component v-bind:content="projects"></chat-component>
+            <div>
+                <input v-model="projectName" placeholder="write Project" type="text">
+                <button v-on:click="sendProject">
+                    <i class="fa fa-plus-square" style="color:Green"> Add Project</i>
+                </button>
+                <br />
+                <input v-model="projectId" placeholder="write ProjectID" type="text">
+                <input v-model="todoId" placeholder="write Todoid" type="text" class="u-full-width">
 
-            <!-- start form to send new message to chat box -->
-            <div class="controls" class="field has-addons">
-               <input v-model="ProjectName" placeholder="write Project" type="text" class="u-full-width">
+                <input v-model="todoName" placeholder="write TodoName" type="text">
+                <input v-model="todoDes" placeholder="write TodoDes" type="text">
+                <button v-on:click="sendToDo">
+                    <i class="fa fa-plus-square" style="color:Green">
+                        add to do to {{projectId}}</i>
+                </button>
+                <button v-on:click="deleteProject">DeleteProject</button>
+                <button v-on:click="deleteToDo">Delete to do</button>
+                <button v-on:click="editToDo">Edit to do</button>
 
-               <button v-on:click="sendProject" :disabled="!ProjectName" class="btn-small waves-effect waves-light" type="submit">
-                  <i class="material-icons left">send</i>Send
-               </button>
 
-               <input v-model="ProjectID" placeholder="write ProjectID" type="text" class="u-full-width">
-               <input v-model="Todoid" placeholder="write Todoid" type="text" class="u-full-width">
-
-               <input v-model="TodoName" placeholder="write TodoName" type="text" class="u-full-width">
-               <input v-model="TodoDes" placeholder="write TodoDes" type="text" class="u-full-width">
-
-               
-                    <button v-on:click="sendToDO">add to do to {{ProjectID}}</button> 
-                    <button v-on:click="DeleteProject">DeleteProject</button> 
-                    <button v-on:click="DeletToDO">Delete to do</button> 
-                    <button v-on:click="EditToDO">Edit to do</button> 
-
+                <!-- end form to send new message to chat box -->
 
             </div>
-            <!-- end form to send new message to chat box -->
-                  
-        </div>
-            
 
-         </div>
-        
-      </div>
+
+        </div>
+
+    </div>
     </div>
 
 
-     
-    
 
 
-   <script type="text/javascript" src="https://unpkg.com/vue@2.5.15/dist/vue.min.js"></script>
-   <script type="text/javascript" src="https://unpkg.com/socket.io-client@2.1.0/dist/socket.io.js"></script>
-   <script type="text/javascript" src="app.js"></script>
+
+
+    <script type="text/javascript" src="https://unpkg.com/vue@2.5.15/dist/vue.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/socket.io-client@2.1.0/dist/socket.io.js"></script>
+    <script type="text/javascript" src="app.js"></script>
 </body>
 
 </html>
