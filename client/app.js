@@ -12,7 +12,9 @@ const projectComponent = {
 
                 <ul class="list-group">
                     <div v-for="todo in data.todos">
-                       <li class="list-group-item">{{todo.id}} {{todo.name}}</li>
+                        <li class="list-group-item">
+                            {{todo.id}} {{todo.name}} <button>toggle</button>
+                        </li>
                     </div> 
                 </ul>
             </div>
