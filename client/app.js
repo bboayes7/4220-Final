@@ -24,6 +24,7 @@ const projectComponent = {
 
 
 
+
 const socket = io()
 const app = new Vue({
     el: '#todo-app',
