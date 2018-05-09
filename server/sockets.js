@@ -2,8 +2,6 @@ module.exports = (server) => {
     const
         io = require('socket.io')(server),
         moment = require('moment')
-
-    let users = []
     let projects = []
     const todoArchive = []
     let projectsCounter = 0;//id for projects
@@ -16,34 +14,10 @@ module.exports = (server) => {
 
         // on making a connection - load in the content already present on the server
         socket.emit('refresh-projects', projects)
-        socket.emit('refresh-users', users)
         socket.emit('refresh-todoArchive', todoArchive)
         
-        //on logging in to the server
-        socket.on('join-user', userName => {
-            let flag = false
-            const length = users.length;
-            //checks if username is in users array
-            for (let i = 0; i < length; i++) {
-                if (users[i].name.toLowerCase() == userName.toLowerCase()) {
-                    flag = true;
-                    break;
-                }
-            }
-            if (flag == true)// if found, then emit a fail join otherwise let use join in
-            {
-                io.to(socket.id).emit('failed-join', flag)
-            }
-            else {
-                const user = {
-                    id: socket.id,
-                    name: userName
-                }
-                users.push(user)
-                io.emit('successful-join', user)
-            }
-
-        })
+      
+        
         //on adding a project to server
         socket.on('send-projects', data => {
             const project = {
@@ -51,13 +25,14 @@ module.exports = (server) => {
                 name: data.projectName,
                 date: moment(new Date()).format('MM/DD/YY h:mm a'),
                 todos: [],
-                toDoIdCounter: 0 //To Do task id counter 
+                toDoIdCounter: 0, //To Do task id counter  
+                active:false  
             }
             projectsCounter++;
             projects.push(project)
             io.emit('successful-project', project)
         })
-        //on adding a task to project. needs ProjectID, name for task, description for task and user name.
+        //on adding a task to project. needs ProjectID, name for task, description for task.
         socket.on('send-todo', data => {
             const projectIndex = findProjectIndex(data.projectId)
             const todo = {
@@ -67,8 +42,6 @@ module.exports = (server) => {
                 description: data.todoDes,
                 startDate: moment(new Date()).format('MM/DD/YY h:mm a'),
                 finishDate: "",
-                writtenBy: data.userName,
-                finishedBy: "",
                 completed: false
             }
             projects[projectIndex].toDoIdCounter++;
@@ -103,12 +76,10 @@ module.exports = (server) => {
             if(projects[projectIndex].todos[toDoIndex].completed == false)
             {
                 projects[projectIndex].todos[toDoIndex].completed = true
-                projects[projectIndex].todos[toDoIndex].finishedBy = data.userName
                 projects[projectIndex].todos[toDoIndex].finishDate = moment(new Date()).format('MM/DD/YY h:mm a')
             }
             else{
                 projects[projectIndex].todos[toDoIndex].completed = false
-                projects[projectIndex].todos[toDoIndex].finishedBy = ""
                 projects[projectIndex].todos[toDoIndex].finishDate = ""
             }
 
@@ -132,13 +103,17 @@ module.exports = (server) => {
             io.emit('refresh-todoArchive', todoArchive)
 
         })
+        socket.on('set-active', data => {
+            const projectIndex = findProjectIndex(data.projectId)
 
-        socket.on('disconnect', () => {
-            users = users.filter(user => {
-                return user.id != socket.id
+            projects.forEach(project =>{
+                project.active = false
             })
+            projects[projectIndex].active= true
 
-            io.emit('refresh-users', users)
+            io.emit('refresh-projects', projects)
+
+        })
         })
     })
 }

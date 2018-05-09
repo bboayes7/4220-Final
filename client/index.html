@@ -21,14 +21,24 @@
         <h1>Projects</h1>
     </div>
 
-    
+    <div id="todo-app">
+        <p>{{hello}}</p>
+        <div cplass= "container">
+            <div class="control">
+               
+              </div>
+              <div class="card" style="width: 18rem;">
+                    <div class="card-body">
 
-        <div class= "container">
+                <label for="projectNameinput">Enter new Project</label>
+                <input class="input" type="text" placeholder="Enter your Project" required v-model="projectName"@keyup.enter="sendProject"> 
+            </div>
+             
+            </div>
             <project-component v-bind:content="projects"></project-component>
+
             <div>
-                <input v-model="projectName" placeholder="write Project" type="text">
-                    <i class="fa fa-plus-square" style="color:Green"> Add Project</i>
-                </button>
+                
                 <br />
                 <input v-model="projectId" placeholder="write ProjectID" type="text">
                 <input v-model="todoId" placeholder="write Todoid" type="text" class="u-full-width">
@@ -42,9 +52,10 @@
                 <button v-on:click="deleteProject">DeleteProject</button>
                 <button v-on:click="deleteToDo">Delete to do</button>
                 <button v-on:click="editToDo">Edit to do</button>
+                <button v-on:click="setActive">set active</button>
 
-                <input v-model="projectName" placeholder="write Project" type="text">
-                <button v-on:click="sendProject">
+
+
                 <!-- end form to send new message to chat box -->
 
             </div>

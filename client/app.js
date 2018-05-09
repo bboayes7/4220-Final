@@ -1,12 +1,16 @@
 const projectComponent = {
     template: ` 
     <div class="container">
+
         <div class="card" v-for="data in content">
+        <button v-on:click="app.sendProject2(this.projectName)" v-model="this.projectName">this.projectName</button>
+
             <div class="card-body">
                 <div class="card-header">
                     <h3>
                         {{data.id}}
                         <strong>{{data.name}}</strong>
+                        <strong>{{data.active}}</strong>
                     </h3>
                 </div>
                 <ul class="list-group">
@@ -17,8 +21,14 @@ const projectComponent = {
             </div>
         </div>
     </div>`,
-    props: ['content']
-}
+    props: ['content'],
+    data: function () {
+        return {
+            projectName: 'uck'
+        }
+    
+
+}}
 
 
 
@@ -28,6 +38,8 @@ const socket = io()
 const app = new Vue({
     el: '#todo-app',
     data: {
+        hello: "",
+
         loggedIn: false,
         failLogin: false,
         userName: '',
@@ -47,9 +59,12 @@ const app = new Vue({
                 return
 
             socket.emit('join-user', this.userName)
+        },sendProject2: function (Pname) {
+            
+
+            socket.emit('send-projects', { projectName: Pname })
         },
-        sendProject: function () {
-            console.log(`projectname : ${this.projectName}`)
+        sendProject: function (projectName) {
             if (!this.projectName)
                 return
 
@@ -89,6 +104,12 @@ const app = new Vue({
             if (!this.todoDes)
                 return
             socket.emit('edit-todo', { projectId: this.projectId, todoId: this.todoId, todoName: this.todoName, todoDes: this.todoDes })
+        },
+        setActive: function () {
+            if (!this.projectId)
+                return
+            
+            socket.emit('set-active', { projectId: this.projectId})
         }
     },
     components: {
