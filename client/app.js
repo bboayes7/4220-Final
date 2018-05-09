@@ -1,28 +1,53 @@
-// Chat Component
-const chatComponent = {
-    template: ` <div class="chat-box">
-                   <p v-for="data in content">
-                   <span><strong>{{data.id}}</strong> <small>{{data.name}}</small><span>
-                       <br />
-                       {{data.todos}}
-                   </p>
-               </div>`,
-    props: ['content']
-}
+const projectComponent = {
+    template: ` 
+    <div class="container">
+        <div class="card" v-for="data in content">
+            <div class="card-body">
+                <div class="card-header">
+                    <h3>
+                        Project Name - 
+                        <strong>{{data.name}}</strong>
+                        </h3>
+                    <button v-on:click="app.deleteProject(data.id)">Delete Project</button>
+                    <button v-if="data.show == false" v-on:click="data.show = true"> Add Todo </button>
+                    
+                    <div v-if="data.show == true">
+                <input v-model="data.todoName" placeholder="write TodoName" type="text">
+                <input v-model="data.todoDes" placeholder="write TodoDes" type="text">
+                    <button v-on:click="app.sendToDo(data.id,data.todoName,data.todoDes)">
+                    <i class="fa fa-plus-square" style="color:Green">
+                        add to do to {{data.id}}</i>
+                    </button>
+                    </div>
 
-// Users Component
-const usersComponent = {
-    template: ` <div class="user-list">
-                   <h6>Active Users ({{users.length}})</h6>
-                   <ul v-for="user in users">
-                       <li>
-                       <img v-bind:src="user.avater" class="circle" width="30px">
-                       <span>{{user.name}}</span>
+                <ul class="list-group">
+                    <div v-for="todo in data.todos">
+                       <li class="list-group-item">
+                       <input v-if = "todo.edit == true"  type="text" v-model="todo.name">
+                       To-Do -  {{todo.name}} 
+                       </br>
+                       Description - {{todo.description}}
+                       
+                       <button v-on:click="app.deleteToDo(data.id, todo.id)"> Delete </button> 
+
+                       <span class="icon">
+                        <button v-if="todo.edit == true" @click="todo.edit = false">
+                        Done
+                        </button>
+                        <button v-if="todo.edit == false" @click="todo.edit = true">
+                        Edit
+                        </button>
+                            </span>
+
                        </li>
-                       <hr>
-                   </ul>
-               </div>`,
-    props: ['users']
+                    </div> 
+       
+                    </ul>
+       </div>
+                    </div>
+        </div>
+    </div>`,
+    props: ['content']
 }
 
 
@@ -30,18 +55,20 @@ const usersComponent = {
 
 const socket = io()
 const app = new Vue({
-    el: '#chat-app',
+    el: '#todo-app',
     data: {
         loggedIn: false,
-        Faillogin: false,
+        failLogin: false,
         userName: '',
         user: {},
         users: [],
-        ProjectName: '',
+        projectName: '',
         projects: [],
-        ProjectID:"",
-        TodoName:"",
-        TodoDes:""
+        projectId: "",
+        todoName: "",
+        todoDes: "",
+        todoId: "",
+        show: false
     },
     methods: {
         joinUser: function () {
@@ -51,26 +78,42 @@ const app = new Vue({
             socket.emit('join-user', this.userName)
         },
         sendProject: function () {
-            if (!this.ProjectName)
+            console.log(`projectname : ${this.projectName}`)
+            if (!this.projectName)
                 return
 
-            socket.emit('send-projects', { ProjectName: this.ProjectName })
+            socket.emit('send-projects', { projectName: this.projectName })
         },
-        sendToDO: function () {
-            if (!this.ProjectID)
+        sendToDo: function (id, name,des) {
+            console.log(id)
+            console.log(name)
+            console.log(des)
+            socket.emit('send-todo', { projectId: id, todoName: name, todoDes: des})
+        },
+        deleteProject: function (id) {
+            console.log("Delete Project")
+            console.log(id)
+            socket.emit('delete-project', { projectId: id })
+        },
+        deleteToDo: function (id, todoId) {
+            console.log(id)
+            console.log(todoId)
+            socket.emit('delete-todo', { projectId: id, todoId: todoId })
+        },
+        editToDo: function () {
+            if (!this.projectId)
                 return
-            if (!this.TodoName)
+            if (!this.todoId)
                 return
-            if (!this.TodoDes)
+            if (!this.todoName)
                 return
-
-            socket.emit('send-todo', { ProjectID: this.ProjectID,TodoName: this.TodoName,TodoDes: this.TodoDes,userName:this.userName })
+            if (!this.todoDes)
+                return
+            socket.emit('edit-todo', { projectId: this.projectId, todoId: this.todoId, todoName: this.todoName, todoDes: this.todoDes })
         }
     },
     components: {
-        'users-component': usersComponent,
-        'chat-component': chatComponent,
-
+        projectComponent
     }
 })
 
@@ -89,22 +132,21 @@ socket.on('successful-join', user => {
     if (user.name === app.userName) {
         app.user = user
         app.loggedIn = true
-        app.Faillogin = false
+        app.failLogin = false
 
     }
 
     app.users.push(user)
 })
 socket.on('failed-join', flag => {
-    if(app.loggedIn == false)
-    {
-        app.Faillogin = flag
+    if (app.loggedIn == false) {
+        app.failLogin = flag
     }
-    
+
 })
 
 socket.on('successful-project', content => {
     // clear the message after success send
-    app.ProjectName = ''
+    app.projectName = ''
     app.projects.push(content)
 })

@@ -12,7 +12,7 @@
   "dependencies": {
     "express": "^4.16.3",
     "moment": "^2.22.1",
-    "nodemon": "^1.17.3",
+    "nodemon": "^1.17.4",
     "package.json": "^2.0.1",
     "socket.io": "^2.1.0"
   }
