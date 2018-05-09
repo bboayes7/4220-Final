@@ -5,7 +5,6 @@ module.exports = (server) => {
     let projects = []
     const todoArchive = []
     let projectsCounter = 0;//id for projects
-
     const findToDoIndex = (projectIndex, toDoId) => projects[projectIndex].todos.findIndex(todo => {
         return todo.id == toDoId})
     const findProjectIndex = (projectIndex) => projects.findIndex(project => { 
@@ -18,10 +17,6 @@ module.exports = (server) => {
         socket.emit('refresh-projects', projects)
         socket.emit('refresh-todoArchive', todoArchive)
         
-<<<<<<< HEAD
-      
-        
-=======
         //on logging in to the server
         socket.on('join-user', userName => {
             let flag = false
@@ -49,7 +44,6 @@ module.exports = (server) => {
             }
 
         })
->>>>>>> faa2c611e8c1606f70fc3792e91e2be23e8c1736
         //on adding a project to server
         socket.on('send-projects', data => {
             console.log(`data : ${data.projectName}`)
@@ -58,13 +52,8 @@ module.exports = (server) => {
                 name: data.projectName,
                 date: moment(new Date()).format('MM/DD/YY h:mm a'),
                 todos: [],
-<<<<<<< HEAD
                 toDoIdCounter: 0, //To Do task id counter  
                 active:false  
-=======
-
-                toDoIdCounter: 0 //To Do task id counter 
->>>>>>> faa2c611e8c1606f70fc3792e91e2be23e8c1736
             }
 
             projectsCounter++;
@@ -83,12 +72,6 @@ module.exports = (server) => {
                 description: data.todoDes,
                 startDate: moment(new Date()).format('MM/DD/YY h:mm a'),
                 finishDate: "",
-<<<<<<< HEAD
-=======
-                writtenBy: data.userName,
-                finishedBy: "",
-
->>>>>>> faa2c611e8c1606f70fc3792e91e2be23e8c1736
                 completed: false
             }
 
@@ -167,5 +150,5 @@ module.exports = (server) => {
 
         })
         })
-    })
+    
 }
