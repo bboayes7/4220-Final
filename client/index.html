@@ -29,19 +29,6 @@
                 <button v-on:click="sendProject">
                     <i class="fa fa-plus-square" style="color:Green"> Add Project</i>
                 </button>
-                <br />
-                <input v-model="projectId" placeholder="write ProjectID" type="text">
-                <input v-model="todoId" placeholder="write Todoid" type="text" class="u-full-width">
-
-                <input v-model="todoName" placeholder="write TodoName" type="text">
-                <input v-model="todoDes" placeholder="write TodoDes" type="text">
-                <button v-on:click="sendToDo">
-                    <i class="fa fa-plus-square" style="color:Green">
-                        add to do to {{projectId}}</i>
-                </button>
-                <button v-on:click="deleteProject">DeleteProject</button>
-                <button v-on:click="deleteToDo">Delete to do</button>
-                <button v-on:click="editToDo">Edit to do</button>
 
 
                 <!-- end form to send new message to chat box -->

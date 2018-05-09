@@ -1,24 +1,53 @@
 const projectComponent = {
-    template: ` 
-    <div class="container">
-        <div class="card" v-for="data in content">
-            <div class="card-body">
-                <div class="card-header">
-                    <h3>
-                        {{data.id}}
-                        <strong>{{data.name}}</strong>
-                    </h3>
-                </div>
+  template: `
+  <div class="container">
+      <div class="card" v-for="data in content" v-on:click=app.collapse(data.id)>
+          <div class="card-body">
+              <div class="card-header">
+                  <h3>
+                      Project Name -
+                      <strong>{{data.name}}</strong>
+                      </h3>
+                      <div v-if="data.active == true">
+                  <button v-on:click="app.deleteProject(data.id)">Delete Project</button>
 
-                <ul class="list-group">
-                    <div v-for="todo in data.todos">
-                       <li class="list-group-item">{{todo.id}} {{todo.name}}</li>
-                    </div> 
-                </ul>
-            </div>
-        </div>
-    </div>`,
-    props: ['content']
+
+              <input v-model="data.todoName" placeholder="write TodoName" type="text">
+              <input v-model="data.todoDes" placeholder="write TodoDes" type="text">
+                  <button v-on:click="app.sendToDo(data.id,data.todoName,data.todoDes)">
+                  <i class="fa fa-plus-square" style="color:Green">
+                      add to do to {{data.name}}</i>
+                  </button>
+              <ul class="list-group">
+                  <div v-for="todo in data.todos">
+                     <li class="list-group-item">
+                     <input v-if = "todo.edit == true"  type="text" v-model="todo.name">
+                     To-Do -  {{todo.name}}
+                     </br>
+                     Description - {{todo.description}}
+
+                     <button v-on:click="app.deleteToDo(data.id, todo.id)"> Delete </button>
+
+                     <span class="icon">
+                      <button v-if="todo.edit == true" @click="todo.edit = false">
+                      Done
+                      </button>
+                      <button v-if="todo.edit == false" @click="todo.edit = true">
+                      Edit
+                      </button>
+                          </span>
+
+                     </li>
+                     </div>
+
+                  </div>
+
+                  </ul>
+     </div>
+                  </div>
+      </div>
+  </div>`,
+  props: ['content']
 }
 
 
@@ -29,6 +58,7 @@ const app = new Vue({
     el: '#todo-app',
     data: {
         loggedIn: false,
+        //add collapse varible
         failLogin: false,
         userName: '',
         user: {},
@@ -39,7 +69,6 @@ const app = new Vue({
         todoName: "",
         todoDes: "",
         todoId: ""
-
     },
     methods: {
         joinUser: function () {
@@ -55,29 +84,21 @@ const app = new Vue({
 
             socket.emit('send-projects', { projectName: this.projectName })
         },
-        sendToDo: function () {
-            if (!this.projectId)
-                return
-            if (!this.todoName)
-                return
-            if (!this.todoDes)
-                return
-
-            socket.emit('send-todo', { projectId: this.projectId, todoName: this.todoName, todoDes: this.todoDes, userName: this.userName })
+        sendToDo: function (id, name,des) {
+            console.log(id)
+            console.log(name)
+            console.log(des)
+            socket.emit('send-todo', { projectId: id, todoName: name, todoDes: des})
         },
-        deleteProject: function () {
-            if (!this.projectId)
-                return
-
-            socket.emit('delete-project', { projectId: this.projectId })
+        deleteProject: function (id) {
+            console.log("Delete Project")
+            console.log(id)
+            socket.emit('delete-project', { projectId: id })
         },
-        deleteToDo: function () {
-            if (!this.projectId)
-                return
-            if (!this.todoId)
-                return
-
-            socket.emit('delete-todo', { projectId: this.projectId, todoId: this.todoId })
+        deleteToDo: function (id, todoId) {
+            console.log(id)
+            console.log(todoId)
+            socket.emit('delete-todo', { projectId: id, todoId: todoId })
         },
         editToDo: function () {
             if (!this.projectId)
@@ -89,7 +110,11 @@ const app = new Vue({
             if (!this.todoDes)
                 return
             socket.emit('edit-todo', { projectId: this.projectId, todoId: this.todoId, todoName: this.todoName, todoDes: this.todoDes })
-        }
+        },
+        collapse: function(projectId){
+          console.log(projectId);
+          socket.emit('set-active', {projectId: projectId});
+        },
     },
     components: {
         projectComponent
