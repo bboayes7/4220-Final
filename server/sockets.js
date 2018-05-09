@@ -112,9 +112,18 @@ module.exports = (server) => {
             io.emit('refresh-projects', projects)
         })
         socket.on('toggle-todo', data => {
+            //test
+            console.log('i got called')
+            console.log('SERVERSIDE')
+            console.log('SERVERSIDE')
+            console.log(data)
 
+            //test
             const projectIndex = findProjectIndex(data.projectId)
             const toDoIndex = findToDoIndex(projectIndex, data.todoId)
+            
+            console.log(`${projectIndex} && ${toDoIndex}`);
+
             if(projects[projectIndex].todos[toDoIndex].completed == false)
             {
                 projects[projectIndex].todos[toDoIndex].completed = true
@@ -126,6 +135,7 @@ module.exports = (server) => {
                 projects[projectIndex].todos[toDoIndex].finishedBy = ""
                 projects[projectIndex].todos[toDoIndex].finishDate = ""
             }
+            console.log(projects[projectIndex].todos[toDoIndex].completed)
 
             io.emit('refresh-projects', projects)
         })

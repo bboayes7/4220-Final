@@ -13,7 +13,7 @@ const projectComponent = {
                 <ul class="list-group">
                     <div v-for="todo in data.todos">
                         <li class="list-group-item">
-                            {{todo.id}} {{todo.name}} <button>toggle</button>
+                            {{todo.id}} {{todo.name}} <button v-on:click="app.toggleToDo(todo.projectId, todo.id)">toggle</button>
                         </li>
                     </div> 
                 </ul>
@@ -22,7 +22,6 @@ const projectComponent = {
     </div>`,
     props: ['content']
 }
-
 
 
 
@@ -92,6 +91,11 @@ const app = new Vue({
             if (!this.todoDes)
                 return
             socket.emit('edit-todo', { projectId: this.projectId, todoId: this.todoId, todoName: this.todoName, todoDes: this.todoDes })
+        },
+        toggleToDo: function(projectId, todoId){
+            console.log("CLIENTSIDE")
+            console.log(`${projectId} && ${todoId}`)
+            socket.emit('toggle-todo', { projectId: projectId, todoId: todoId})
         }
     },
     components: {
@@ -132,3 +136,4 @@ socket.on('successful-project', content => {
     app.projectName = ''
     app.projects.push(content)
 })
+
