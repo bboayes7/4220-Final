@@ -13,6 +13,7 @@ const projectComponent = {
                         <strong>{{data.active}}</strong>
                     </h3>
                 </div>
+
                 <ul class="list-group">
                     <div v-for="todo in data.todos">
                        <li class="list-group-item">{{todo.id}} {{todo.name}}</li>
