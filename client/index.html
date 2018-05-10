@@ -6,61 +6,69 @@
     <title> TO DO LIST</title>
 
     <link rel="shortcut icon" href="img/favicon-list.png" />
-    <!-- Import Google Fonts -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-    <style>
-        [v-cloak] {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+        crossorigin="anonymous">
+        
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-    <div>
-        <h1>Projects</h1>
-    </div>
+
+
 
     <div id="todo-app">
-        <div class= "container">
-            <project-component v-bind:content="projects"></project-component>
-            <div>
-                <input v-model="projectName" placeholder="write Project" type="text">
-                <button v-on:click="sendProject">
-                    <i class="fa fa-plus-square" style="color:Green"> Add Project</i>
-                </button>
-                <br />
-                <input v-model="projectId" placeholder="write ProjectID" type="text">
-                <input v-model="todoId" placeholder="write Todoid" type="text" class="u-full-width">
-
-                <input v-model="todoName" placeholder="write TodoName" type="text">
-                <input v-model="todoDes" placeholder="write TodoDes" type="text">
-                <button v-on:click="sendToDo">
-                    <i class="fa fa-plus-square" style="color:Green">
-                        add to do to {{projectId}}</i>
-                </button>
-                <button v-on:click="deleteProject">DeleteProject</button>
-                <button v-on:click="deleteToDo">Delete to do</button>
-                <button v-on:click="editToDo">Edit to do</button>
-
-
-                <!-- end form to send new message to chat box -->
-
+            <div class="jumbotron row">
+                
+                    <h1 class="col-12 col-md-8">Projects</h1>
+            
+                <div class="col-6 col-md-4">
+                                        <input class="form-control"v-model="projectName" placeholder="Project Title" type="text" v-on:keyup.enter="sendProject">
+                                     
+                                        <button class="btn btn-success" v-on:click="sendProject">
+                                         Add Project
+                                        </button>
+                                        <button class="btn btn-danger" v-on:click="archiveToDo">Archive</button>
+                </div>
+            
+            </div>
+            <div v-if="alert" class="alert alert-danger" v-on="app.alert = false">
+                yooo
             </div>
 
 
+
+        <div class="container">               
+            <project-component v-bind:content="projects"></project-component>
         </div>
 
     </div>
-    </div>
 
 
 
 
 
-    <script type="text/javascript" src="https://unpkg.com/vue@2.5.15/dist/vue.min.js"></script>
+
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.js"
+    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://unpkg.com/socket.io-client@2.1.0/dist/socket.io.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/vue@2.5.15/dist/vue.min.js"></script>
     <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript">
+        window.setTimeout(function (){
+            $(".alert").fadeTo(500, 0).slideUp(500, function() {
+                $(this).remove();
+            });
+        }, 5000);
+    </script>
 </body>
+
 
 </html>

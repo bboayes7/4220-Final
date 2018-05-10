@@ -9,10 +9,11 @@ module.exports = (server) => {
     let projectsCounter = 0;//id for projects
 
     const findToDoIndex = (projectIndex, toDoId) => projects[projectIndex].todos.findIndex(todo => {
-        return todo.id == toDoId})
-    const findProjectIndex = (projectIndex) => projects.findIndex(project => { 
-        return project.id == projectIndex })
-
+        return todo.id == toDoId
+    })
+    const findProjectIndex = (projectIndex) => projects.findIndex(project => {
+        return project.id == projectIndex
+    })
     // when the page is loaded in the browser the connection event is fired
     io.on('connection', socket => {
 
@@ -20,56 +21,56 @@ module.exports = (server) => {
         socket.emit('refresh-projects', projects)
         socket.emit('refresh-users', users)
         socket.emit('refresh-todoArchive', todoArchive)
-        
-        //on logging in to the server
-        socket.on('join-user', userName => {
-            let flag = false
-            const length = users.length;
-            //checks if username is in users array
-            for (let i = 0; i < length; i++) {
-                if (users[i].name.toLowerCase() == userName.toLowerCase()) {
-                    flag = true;
-                    break;
+
+            //on logging in to the server
+            socket.on('join-user', userName => {
+                let flag = false
+                const length = users.length;
+                //checks if username is in users array
+                for (let i = 0; i < length; i++) {
+                    if (users[i].name.toLowerCase() == userName.toLowerCase()) {
+                        flag = true;
+                        break;
+                    }
                 }
-            }
-            if (flag == true)// if found, then emit a fail join otherwise let use join in
-            {
-                io.to(socket.id).emit('failed-join', flag)
-            }
-            else {
-                const user = {
-
-                    id: socket.id,
-                    name: userName
+                if (flag == true)// if found, then emit a fail join otherwise let use join in
+                {
+                    io.to(socket.id).emit('failed-join', flag)
                 }
-                users.push(user)
-                io.emit('successful-join', user)
+                else {
+                    const user = {
+                        id: socket.id,
+                        name: userName
+                    }
+                    users.push(user)
+                    io.emit('successful-join', user)
+                }
 
-            }
-
-        })
+            })
         //on adding a project to server
         socket.on('send-projects', data => {
-            console.log(`data : ${data.projectName}`)
             const project = {
                 id: projectsCounter,
                 name: data.projectName,
                 date: moment(new Date()).format('MM/DD/YY h:mm a'),
                 todos: [],
-
-                toDoIdCounter: 0 //To Do task id counter 
+                toDoIdCounter: 0,
+                show: false, //To Do task id counter
+                active: false
             }
-
             projectsCounter++;
             projects.push(project)
+            if(project == projects[0]){
+                projects[0].active = true;
+            }
             io.emit('successful-project', project)
+
         })
         //on adding a task to project. needs ProjectID, name for task, description for task and user name.
         socket.on('send-todo', data => {
-
             const projectIndex = findProjectIndex(data.projectId)
-
             const todo = {
+                edit: false,
                 projectId: data.projectId,
                 id: projects[projectIndex].toDoIdCounter,
                 name: data.todoName,
@@ -88,13 +89,11 @@ module.exports = (server) => {
         })
         socket.on('delete-project', data => {
             const projectIndex = findProjectIndex(data.projectId)
-
             delete projects[projectIndex]
             projects = projects.filter(function (n) { return n != undefined });
             io.emit('refresh-projects', projects)
         })
         socket.on('delete-todo', data => {
-
             const projectIndex = findProjectIndex(data.projectId)
             const toDoIndex = findToDoIndex(projectIndex, data.todoId)
             delete projects[projectIndex].todos[toDoIndex]
@@ -102,23 +101,18 @@ module.exports = (server) => {
             io.emit('refresh-projects', projects)
         })
         socket.on('edit-todo', data => {
+            
             const projectIndex = findProjectIndex(data.projectId)
             const toDoIndex = findToDoIndex(projectIndex, data.todoId)
             console.log(toDoIndex)
             projects[projectIndex].todos[toDoIndex].name = data.todoName
             projects[projectIndex].todos[toDoIndex].description = data.todoDes
+            projects[projectIndex].todos[toDoIndex].edit = false
 
 
             io.emit('refresh-projects', projects)
         })
         socket.on('toggle-todo', data => {
-            //test
-            console.log('i got called')
-            console.log('SERVERSIDE')
-            console.log('SERVERSIDE')
-            console.log(data)
-
-            //test
             const projectIndex = findProjectIndex(data.projectId)
             const toDoIndex = findToDoIndex(projectIndex, data.todoId)
             
@@ -142,16 +136,16 @@ module.exports = (server) => {
         socket.on('archive-todo', data => {
             const projectsLength = projects.length;
             for (let j = 0; j < projectsLength; j++) {
-                const toDoLength =projects[j].todos.length
+                const toDoLength = projects[j].todos.length
                 for (let i = 0; i < toDoLength; i++) {
-          
-                  if (projects[j].todos[i].completed === true) {
-                    todoArchive.push(projects[j].todos[i])
-                    delete projects[j].todos[i];
-                  }
+
+                    if (projects[j].todos[i].completed === true) {
+                        todoArchive.push(projects[j].todos[i])
+                        delete projects[j].todos[i];
+                    }
                 }
                 projects[j].todos = projects[j].todos.filter(function (n) { return n != undefined });
-              }
+            }
 
             io.emit('refresh-projects', projects)
             io.emit('refresh-todoArchive', todoArchive)
@@ -164,6 +158,24 @@ module.exports = (server) => {
             })
 
             io.emit('refresh-users', users)
+        })
+
+        socket.on('set-active', data => {
+            const projectIndex = findProjectIndex(data.projectId)
+
+            if(projects[projectIndex].active == false){
+                projects.forEach(project =>{
+                    project.active = false
+                })
+                projects[projectIndex].active= true
+                io.emit('refresh-projects', projects)
+
+            } else {
+                projects[projectIndex].active= false
+                io.emit('refresh-projects', projects)
+            }
+
+
         })
     })
 }
