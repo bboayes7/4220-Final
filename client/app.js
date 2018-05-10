@@ -38,8 +38,8 @@ const projectComponent = {
                 <transition name="fade">
                 <div v-show="data.active == true">
                   <div class="form-group">
-                    <input class="form-control form-control-sm" v-model="data.todoName" placeholder="Title" type="text">
-                    <input class="form-control form-control-sm" v-model="data.todoDes" placeholder="Description" type="text">
+                    <input class="form-control form-control-sm" v-model="data.todoName" placeholder="Title" type="text" v-on:keyup.enter="app.sendToDo(data.id,data.todoName,data.todoDes)">
+                    <input class="form-control form-control-sm" v-model="data.todoDes" placeholder="Description" type="text" v-on:keyup.enter="app.sendToDo(data.id,data.todoName,data.todoDes)">
                     <button type="button" class="form-control btn btn-success form-control-sm" v-on:click="app.sendToDo(data.id,data.todoName,data.todoDes)">Add To-Do</button>
                   </div>
 
