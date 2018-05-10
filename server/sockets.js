@@ -5,7 +5,6 @@ module.exports = (server) => {
 
     let users = []
     let projects = []
-    const todoArchive = []
     let projectsCounter = 0;//id for projects
 
     const findToDoIndex = (projectIndex, toDoId) => projects[projectIndex].todos.findIndex(todo => {
@@ -20,7 +19,6 @@ module.exports = (server) => {
         // on making a connection - load in the content already present on the server
         socket.emit('refresh-projects', projects)
         socket.emit('refresh-users', users)
-        socket.emit('refresh-todoArchive', todoArchive)
 
             //on logging in to the server
             socket.on('join-user', userName => {
@@ -134,13 +132,11 @@ module.exports = (server) => {
             io.emit('refresh-projects', projects)
         })
         socket.on('archive-todo', data => {
-            const projectsLength = projects.length;
-            for (let j = 0; j < projectsLength; j++) {
-                const toDoLength = projects[j].todos.length
-                for (let i = 0; i < toDoLength; i++) {
 
-                    if (projects[j].todos[i].completed === true) {
-                        todoArchive.push(projects[j].todos[i])
+            for (let j = 0; j < projects.length; j++) {
+                for (let i = 0; i < projects[j].todos.length; i++) {
+
+                    if (projects[j].todos[i].completed == true) {
                         delete projects[j].todos[i];
                     }
                 }
@@ -148,7 +144,20 @@ module.exports = (server) => {
             }
 
             io.emit('refresh-projects', projects)
-            io.emit('refresh-todoArchive', todoArchive)
+
+        })
+        socket.on('archive-perProject', data => {
+            const projectIndex = findProjectIndex(data.projectId)
+                for (let i = 0; i < projects[projectIndex].todos.length; i++) {
+
+                    if (projects[projectIndex].todos[i].completed == true) {
+                        delete projects[j].todos[i];
+                    }
+                }
+                projects[projectIndex].todos = projects[j].todos.filter(function (n) { return n != undefined });
+            
+
+            io.emit('refresh-projects', projects)
 
         })
 
