@@ -29,6 +29,6 @@
     opacity: 0;
 }
  
-.done {
-       text-decoration: line-through;
-   }
+.container{
+    margin-top:215px;
+}
