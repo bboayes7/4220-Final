@@ -32,3 +32,15 @@
     opacity: 0;
 }
 
+.jumbotron {
+    background: lightgray no-repeat center;
+    position: fixed;
+    top: 0; 
+    left: 0; 
+    min-width: 100%;
+}
+
+.container{
+    margin-top:215px;
+}
+

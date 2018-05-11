@@ -1,19 +1,18 @@
 const projectComponent = {
     template: `
-<div class="container">
+    <div class="container">
     <div class="card" v-for="data in content">
         <div class="card-body">
-            <div class="card-header" >
+            <div class="card-header">
                 <h2 class="title">
-                  <strong>{{data.name}}</strong>
-                  
-
+                    <strong>{{data.name}}</strong>
 
                     <div v-if="data.active == true" class="btn-group float-right dropright">
                         <button class="btn btn-secondary btn-sm" type="button" v-on:click=app.collapse(data.id)>
                             <i class="fas fa-minus"></i>
                         </button>
-                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdown1">
+                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false" id="dropdown1">
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdown1">
@@ -24,77 +23,89 @@ const projectComponent = {
                         <button class="btn btn-secondary btn-sm" type="button" v-on:click=app.collapse(data.id)>
                             <i class="fas fa-plus"></i>
                         </button>
-                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdown2">
+                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false" id="dropdown2">
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdown2">
                             <button class="dropdown-item" type="button" v-on:click="app.deleteProject(data.id)">Delete Project</button>
                         </div>
                     </div>
-                    
-                </div>
-                
-                </h2>
-                <transition name="fade">
+
+            </div>
+
+            </h2>
+            <transition name="fade">
                 <div v-show="data.active == true">
-                  <div class="form-group">
-                    <input class="form-control form-control-sm" v-model="data.todoName" placeholder="Title" type="text" v-on:keyup.enter="app.sendToDo(data.id,data.todoName,data.todoDes)">
-                    <input class="form-control form-control-sm" v-model="data.todoDes" placeholder="Description" type="text" v-on:keyup.enter="app.sendToDo(data.id,data.todoName,data.todoDes)">
-                    <button type="button" class="form-control btn btn-success form-control-sm" v-on:click="app.sendToDo(data.id,data.todoName,data.todoDes)">Add To-Do</button>
-                  </div>
+                    <div class="form-group">
+                        <input class="form-control form-control-sm" v-model="data.todoName" placeholder="Title" type="text" v-on:keyup.enter="app.sendToDo(data.id,data.todoName,data.todoDes)">
+                        <input class="form-control form-control-sm" v-model="data.todoDes" placeholder="Description" type="text" v-on:keyup.enter="app.sendToDo(data.id,data.todoName,data.todoDes)">
+                        <button type="button" class="form-control btn btn-success form-control-sm" v-on:click="app.sendToDo(data.id,data.todoName,data.todoDes)">Add To-Do</button>
+                    </div>
 
-                  
-                  <ul class="list-group">
-                      <div v-for="todo in data.todos">
-                          <li class="list-group-item" v-if="!todo.complete">
-                            <div v-if="todo.edit == true">
-                                <div class="input-group">
-                                <input class="form-control form-control-sm" type="text" v-model="todo.name" v-on:keyup.enter="app.editToDo(todo.projectId, todo.id, todo.name, todo.description)">
-                                 <div class="input-group-btn btn-group float-right">
-                                
-                                <button class="btn btn-primary" @click="todo.edit = false" v-on:click="app.editToDo(todo.projectId, todo.id, todo.name, todo.description)">
-                                    Done
-                                </button>
-                                <button class="btn btn-danger" v-on:click="app.deleteToDo(data.id, todo.id)"> Delete </button>
+
+                    <ul class="list-group">
+                        <div v-for="todo in data.todos">
+                            <li class="list-group-item" v-if="!todo.complete">
+                                <div v-if="todo.edit == true">
+                                    <div class="input-group">
+                                        <input class="form-control form-control-sm" type="text" v-model="todo.name" v-on:keyup.enter="app.editToDo(todo.projectId, todo.id, todo.name, todo.description)">
+                                        <div class="input-group-btn btn-group float-right">
+
+                                            <button class="btn btn-primary" @click="todo.edit = false" v-on:click="app.editToDo(todo.projectId, todo.id, todo.name, todo.description)">
+                                                Done
+                                            </button>
+                                            <button class="btn btn-danger" v-on:click="app.deleteToDo(data.id, todo.id)"> Delete </button>
+                                        </div>
+
+                                    </div>
+                                    <input class="form-control form-control-sm" type="text" v-model="todo.description" v-on:keyup.enter="app.editToDo(todo.projectId, todo.id, todo.name, todo.description)">
+
                                 </div>
-                                
+
+                                <div v-else>
+                                    <div class="d-flex justify-content-between">
+                                        <h4 class="mb-1">{{todo.name}}</h4>
+
+                                        <div class="btn-group float-right">
+
+                                            <button type="button" class="btn btn-sm btn-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdown2">
+                                                <i class="fas fa-cog"></i>
+                                            </button>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdown2">
+                                                <button class="dropdown-item" v-on:click="app.deleteToDo(data.id, todo.id)"> Delete </button>
+                                                <button class="dropdown-item" @click="todo.edit = true">
+                                                    Edit
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <small class="text-muted">{{todo.description}}</small>
+                                    <div v-if="todo.complete == true">
+                                        <input type="checkbox" id="checkbox" v-on:click="app.toggleToDo(todo.projectId, todo.id)" checked>
+                                        <button v-on:click="app.toggleToDo(todo.projectId, todo.id)">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+
+                                    </div>
+                                    <div v-else>
+                                        <button v-on:click="app.toggleToDo(todo.projectId, todo.id)">
+                                            <i class="far fa-square"></i>
+                                        </button>
+                                        <input type="checkbox" id="checkbox" v-on:click="app.toggleToDo(todo.projectId, todo.id)">
+                                    </div>
                                 </div>
-                                <input class="form-control form-control-sm" type="text" v-model="todo.description" v-on:keyup.enter="app.editToDo(todo.projectId, todo.id, todo.name, todo.description)">
-                                
-                            </div>
-                              
-                              <div v-else>
-                              <div class="d-flex justify-content-between">
-                              <h4 class="mb-1">{{todo.name}}</h4>
-                              
-                              <div class="btn-group float-right">
-
-                              <button type="button" class="btn btn-sm btn-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdown2"> <i class="fas fa-cog"></i></button>
-                              <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                             <div class="dropdown-menu" aria-labelledby="dropdown2">
-                              <button class="dropdown-item" v-on:click="app.deleteToDo(data.id, todo.id)"> Delete </button>
-                              <button class="dropdown-item" @click="todo.edit = true">
-                                Edit
-                              </button>
-                          </div>
-                              </div>
-                              
-                              </div>
-                              <small class="text-muted">{{todo.description}}</small>
-                              <input type="checkbox" id="checkbox" v-on:click="app.toggleToDo(todo.projectId, todo.id)">
-                              </div>
-
-
-
-                          </li>
+                            </li>
                         </div>
                     </ul>
-                    </transition>
-                </div>
+            </transition>
             </div>
         </div>
     </div>
+</div>
 </div>`,
     props: ['content']
 }

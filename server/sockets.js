@@ -18,33 +18,7 @@ module.exports = (server) => {
 
         // on making a connection - load in the content already present on the server
         socket.emit('refresh-projects', projects)
-        socket.emit('refresh-users', users)
 
-            //on logging in to the server
-            socket.on('join-user', userName => {
-                let flag = false
-                const length = users.length;
-                //checks if username is in users array
-                for (let i = 0; i < length; i++) {
-                    if (users[i].name.toLowerCase() == userName.toLowerCase()) {
-                        flag = true;
-                        break;
-                    }
-                }
-                if (flag == true)// if found, then emit a fail join otherwise let use join in
-                {
-                    io.to(socket.id).emit('failed-join', flag)
-                }
-                else {
-                    const user = {
-                        id: socket.id,
-                        name: userName
-                    }
-                    users.push(user)
-                    io.emit('successful-join', user)
-                }
-
-            })
         //on adding a project to server
         socket.on('send-projects', data => {
             const project = {
@@ -77,7 +51,6 @@ module.exports = (server) => {
                 finishDate: "",
                 writtenBy: data.userName,
                 finishedBy: "",
-
                 completed: false
             }
 
