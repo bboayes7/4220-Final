@@ -27,3 +27,14 @@
 .container{
     margin-top:215px;
 }
+
+.proj-holder {
+    background-color: #f9f9f9;
+    height: 100px;
+    width: 430px;
+    border-radius: 10px;
+}
+
+.proj{
+    margin-top: 15px;
+}

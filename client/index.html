@@ -16,8 +16,8 @@
     <div id="todo-app">
         <div class="jumbotron row fixed-top">
             <h1 class="col-12 col-md-8">A Collaborative To-Do App</h1>
-            <div class="col-6 col-md-4">
-                <input class="form-control" v-model="projectName" placeholder="Project Title" type="text" v-on:keyup.enter="sendProject">
+            <div class="proj-holder col-6 col-md-4">
+                <input class="proj form-control" v-model="projectName" placeholder="Project Title" type="text" v-on:keyup.enter="sendProject">
                 <button class="btn btn-success" v-on:click="sendProject">
                     Add Project
                 </button>
