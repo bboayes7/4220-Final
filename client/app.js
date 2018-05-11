@@ -184,28 +184,6 @@ const app = new Vue({
 socket.on('refresh-projects', projects => {
     app.projects = projects
 })
-socket.on('refresh-users', users => {
-    app.users = users
-})
-
-socket.on('successful-join', user => {
-    // the successful-join event is emitted on all connections (open browser windows)
-    // so we need to ensure the loggedIn is set to true and user is set for matching user only
-    if (user.name === app.userName) {
-        app.user = user
-        app.loggedIn = true
-        app.failLogin = false
-
-    }
-
-    app.users.push(user)
-})
-socket.on('failed-join', flag => {
-    if (app.loggedIn == false) {
-        app.failLogin = flag
-    }
-
-})
 
 socket.on('successful-project', content => {
     // clear the message after success send

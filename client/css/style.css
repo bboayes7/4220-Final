@@ -14,11 +14,6 @@
     text-transform: uppercase;
 }
 
-.d-flex {
-    border-width: 2px;
-    border-bottom-style: outset;
-}
-
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity .5s;

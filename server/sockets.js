@@ -3,7 +3,6 @@ module.exports = (server) => {
         io = require('socket.io')(server),
         moment = require('moment')
 
-    let users = []
     let projects = []
     const todoArchive = []
     let projectsCounter = 0;//id for projects
@@ -19,34 +18,8 @@ module.exports = (server) => {
 
         // on making a connection - load in the content already present on the server
         socket.emit('refresh-projects', projects)
-        socket.emit('refresh-users', users)
         socket.emit('refresh-todoArchive', todoArchive)
 
-        //on logging in to the server
-        socket.on('join-user', userName => {
-            let flag = false
-            const length = users.length;
-            //checks if username is in users array
-            for (let i = 0; i < length; i++) {
-                if (users[i].name.toLowerCase() == userName.toLowerCase()) {
-                    flag = true;
-                    break;
-                }
-            }
-            if (flag == true)// if found, then emit a fail join otherwise let use join in
-            {
-                io.to(socket.id).emit('failed-join', flag)
-            }
-            else {
-                const user = {
-                    id: socket.id,
-                    name: userName
-                }
-                users.push(user)
-                io.emit('successful-join', user)
-            }
-
-        })
         //on adding a project to server
         socket.on('send-projects', data => {
             const project = {
@@ -75,11 +48,6 @@ module.exports = (server) => {
                 id: projects[projectIndex].toDoIdCounter,
                 name: data.todoName,
                 description: data.todoDes,
-                startDate: moment(new Date()).format('MM/DD/YY h:mm a'),
-                finishDate: "",
-                writtenBy: data.userName,
-                finishedBy: "",
-
                 completed: false
             }
 
@@ -100,7 +68,7 @@ module.exports = (server) => {
             projects[projectIndex].todos = projects[projectIndex].todos.filter(function (n) { return n != undefined });
             io.emit('refresh-projects', projects)
         })
-        
+
         socket.on('edit-todo', data => {
 
             const projectIndex = findProjectIndex(data.projectId)
@@ -121,13 +89,9 @@ module.exports = (server) => {
 
             if (projects[projectIndex].todos[toDoIndex].completed == false) {
                 projects[projectIndex].todos[toDoIndex].completed = true
-                projects[projectIndex].todos[toDoIndex].finishedBy = data.userName
-                projects[projectIndex].todos[toDoIndex].finishDate = moment(new Date()).format('MM/DD/YY h:mm a')
             }
             else if (projects[projectIndex].todos[toDoIndex].completed == true) {
                 projects[projectIndex].todos[toDoIndex].completed = false
-                projects[projectIndex].todos[toDoIndex].finishedBy = ""
-                projects[projectIndex].todos[toDoIndex].finishDate = ""
             }
             console.log(projects[projectIndex].todos[toDoIndex].completed)
 
@@ -168,14 +132,6 @@ module.exports = (server) => {
 
         })
 
-        socket.on('disconnect', () => {
-            users = users.filter(user => {
-                return user.id != socket.id
-            })
-
-            io.emit('refresh-users', users)
-        })
-
         socket.on('set-active', data => {
             const projectIndex = findProjectIndex(data.projectId)
 
@@ -190,7 +146,6 @@ module.exports = (server) => {
                 projects[projectIndex].active = false
                 io.emit('refresh-projects', projects)
             }
-
 
         })
     })
