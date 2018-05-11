@@ -76,7 +76,6 @@ const projectComponent = {
                             </button>
                             </div>
                             </div>
-
                             <div class="row" v-if="todo.completed == true">
                              <div class="col-12 col-md-8"> 
                             <h4>{{todo.name}}</h4>
@@ -117,7 +116,6 @@ const projectComponent = {
 
 
 
-
 const socket = io()
 const app = new Vue({
     el: '#todo-app',
@@ -139,7 +137,7 @@ const app = new Vue({
             socket.emit('send-projects', { projectName: this.projectName })
         },
         sendToDo: function (id, name, des) {
-            if (!name || !des)
+            if(!name || !des)
                 return this.alert = true
 
             socket.emit('send-todo', { projectId: id, todoName: name, todoDes: des })
@@ -183,29 +181,6 @@ const app = new Vue({
 // Client Side Socket Event
 socket.on('refresh-projects', projects => {
     app.projects = projects
-})
-
-socket.on('refresh-users', users => {
-    app.users = users
-})
-
-socket.on('successful-join', user => {
-    // the successful-join event is emitted on all connections (open browser windows)
-    // so we need to ensure the loggedIn is set to true and user is set for matching user only
-    if (user.name === app.userName) {
-        app.user = user
-        app.loggedIn = true
-        app.failLogin = false
-
-    }
-
-    app.users.push(user)
-})
-socket.on('failed-join', flag => {
-    if (app.loggedIn == false) {
-        app.failLogin = flag
-    }
-
 })
 
 socket.on('successful-project', content => {

@@ -24,11 +24,12 @@
     transition: opacity .5s;
 }
 
+.container{
+    margin-top:215px;
+}
+
 .fade-enter,
 .fade-leave-to {
     opacity: 0;
 }
  
-.done {
-       text-decoration: line-through;
-   }

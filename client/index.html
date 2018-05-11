@@ -19,7 +19,7 @@
 
 
     <div id="todo-app">
-        <div class="jumbotron row">
+        <div class="jumbotron row fixed-top">
 
             <h1 class="col-12 col-md-8">A Collaborative To-Do App</h1>
 
@@ -29,11 +29,11 @@
                 <button class="btn btn-success" v-on:click="sendProject">
                     Add Project
                 </button>
-                <button class="btn btn-danger" v-on:click="archiveToDo">Archive All To-Dos</button>
+                <button class="btn btn-danger" v-on:click="archiveToDo">Archive</button>
             </div>
 
         </div>
-        <div v-if="alert" class="alert alert-danger" v-on="app.alert = false">
+        <div v-if="alert" class="alert alert-danger">
             yooo
         </div>
 
