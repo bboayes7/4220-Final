@@ -45,7 +45,7 @@ const projectComponent = {
                   
                   <ul class="list-group">
                       <div v-for="todo in data.todos">
-                          <li class="list-group-item" v-if="!todo.complete">
+                          <li class="list-group-item">
                             <div v-if="todo.edit == true">
                                 <div class="input-group">
                                 <input class="form-control form-control-sm" type="text" v-model="todo.name" v-on:keyup.enter="app.editToDo(todo.projectId, todo.id, todo.name, todo.description)">
