@@ -1,36 +1,98 @@
 const projectComponent = {
-    template: ` 
-    <div class="container">
+    template: `
+<div class="container">
+    <div class="card" v-for="data in content">
+        <div class="card-body">
+            <div class="card-header" >
+                <h2 class="title">
+                  <strong>{{data.name}}</strong>
+                  
+                    <div v-if="data.active == true" class="btn-group float-right dropright">
+                        <button class="btn btn-secondary btn-sm" type="button" v-on:click=app.collapse(data.id)>
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdown1">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdown1">
+                            <button class="dropdown-item" type="button" v-on:click="app.deleteProject(data.id)">Delete Project</button>
+                            <button class="dropdown-item" type="button" v-on:click="app.archiveProjectToDo(data.id)">Archive Project</button>
 
-        <div class="card" v-for="data in content">
-        <button v-on:click="app.sendProject2(this.projectName)" v-model="this.projectName">this.projectName</button>
-
-            <div class="card-body">
-                <div class="card-header">
-                    <h3>
-                        {{data.id}}
-                        <strong>{{data.name}}</strong>
-                        <strong>{{data.active}}</strong>
-                    </h3>
+                        </div>
+                    </div>
+                    <div v-else class="btn-group float-right dropright">
+                        <button class="btn btn-secondary btn-sm" type="button" v-on:click=app.collapse(data.id)>
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdown2">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdown2">
+                            <button class="dropdown-item" type="button" v-on:click="app.deleteProject(data.id)">Delete Project</button>
+                        </div>
+                    </div>
+                    
                 </div>
-
-                <ul class="list-group">
-                    <div v-for="todo in data.todos">
-                       <li class="list-group-item">{{todo.id}} {{todo.name}}</li>
-                    </div> 
-                </ul>
+                
+                </h2>
+                <transition name="fade">
+                <div v-show="data.active == true">
+                  <div class="form-group">
+                    <input class="form-control form-control-sm" v-model="data.todoName" placeholder="Title" type="text" v-on:keyup.enter="app.sendToDo(data.id,data.todoName,data.todoDes)">
+                    <input class="form-control form-control-sm" v-model="data.todoDes" placeholder="Description" type="text" v-on:keyup.enter="app.sendToDo(data.id,data.todoName,data.todoDes)">
+                    <button type="button" class="form-control btn btn-success form-control-sm" v-on:click="app.sendToDo(data.id,data.todoName,data.todoDes)">Add To-Do</button>
+                  </div>
+                  
+                  <ul class="list-group">
+                      <div v-for="todo in data.todos">
+                          <li class="list-group-item" v-if="!todo.complete">
+                            <div v-if="todo.edit == true">
+                                <div class="input-group">
+                                <input class="form-control form-control-sm" type="text" v-model="todo.name" v-on:keyup.enter="app.editToDo(todo.projectId, todo.id, todo.name, todo.description)">
+                                 <div class="input-group-btn btn-group float-right">
+                                
+                                <button class="btn btn-primary" @click="todo.edit = false" v-on:click="app.editToDo(todo.projectId, todo.id, todo.name, todo.description)">
+                                    Done
+                                </button>
+                                <button class="btn btn-danger" v-on:click="app.deleteToDo(data.id, todo.id)"> Delete </button>
+                                </div>
+                                
+                                </div>
+                                <input class="form-control form-control-sm" type="text" v-model="todo.description" v-on:keyup.enter="app.editToDo(todo.projectId, todo.id, todo.name, todo.description)">
+                                
+                            </div>
+                              
+                              <div v-else>
+                              <div class="d-flex justify-content-between">
+                              <h4 class="mb-1">{{todo.name}}</h4>
+                              
+                              <div class="btn-group float-right">
+                              <button type="button" class="btn btn-sm btn-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dropdown2"> <i class="fas fa-cog"></i></button>
+                              <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                             <div class="dropdown-menu" aria-labelledby="dropdown2">
+                              <button class="dropdown-item" v-on:click="app.deleteToDo(data.id, todo.id)"> Delete </button>
+                              <button class="dropdown-item" @click="todo.edit = true">
+                                Edit
+                              </button>
+                          </div>
+                              </div>
+                              
+                              </div>
+                              <small class="text-muted">{{todo.description}}</small>
+                              <input type="checkbox" id="checkbox" v-on:click="app.toggleToDo(todo.projectId, todo.id)">
+                              </div>
+                          </li>
+                        </div>
+                    </ul>
+                    </transition>
+                </div>
             </div>
         </div>
-    </div>`,
-    props: ['content'],
-    data: function () {
-        return {
-            projectName: 'uck'
-        }
-    
-
-}}
-
+    </div>
+</div>`,
+    props: ['content']
+}
 
 
 
@@ -39,78 +101,56 @@ const socket = io()
 const app = new Vue({
     el: '#todo-app',
     data: {
-        hello: "",
-
-        loggedIn: false,
-        failLogin: false,
-        userName: '',
-        user: {},
-        users: [],
         projectName: '',
         projects: [],
         projectId: "",
         todoName: "",
         todoDes: "",
-        todoId: ""
-
+        todoId: "",
+        alert: false
     },
     methods: {
-        joinUser: function () {
-            if (!this.userName)
-                return
-
-            socket.emit('join-user', this.userName)
-        },sendProject2: function (Pname) {
-            
-
-            socket.emit('send-projects', { projectName: Pname })
-        },
-        sendProject: function (projectName) {
+        sendProject: function () {
+            console.log(`projectname : ${this.projectName}`)
             if (!this.projectName)
                 return
 
             socket.emit('send-projects', { projectName: this.projectName })
         },
-        sendToDo: function () {
-            if (!this.projectId)
-                return
-            if (!this.todoName)
-                return
-            if (!this.todoDes)
-                return
+        sendToDo: function (id, name, des) {
+            if(!name || !des)
+                return this.alert = true
 
-            socket.emit('send-todo', { projectId: this.projectId, todoName: this.todoName, todoDes: this.todoDes, userName: this.userName })
+            socket.emit('send-todo', { projectId: id, todoName: name, todoDes: des })
         },
-        deleteProject: function () {
-            if (!this.projectId)
-                return
+        deleteProject: function (id) {
+            console.log("Delete Project")
+            console.log(id)
+            socket.emit('delete-project', { projectId: id })
+        },
+        deleteToDo: function (id, todoId) {
+            console.log(id)
+            console.log(todoId)
+            socket.emit('delete-todo', { projectId: id, todoId: todoId })
+        },
+        editToDo: function (projectId, todoId, todoName, todoDes) {
 
-            socket.emit('delete-project', { projectId: this.projectId })
+            socket.emit('edit-todo', { projectId: projectId, todoId: todoId, todoName: todoName, todoDes: todoDes })
         },
-        deleteToDo: function () {
-            if (!this.projectId)
-                return
-            if (!this.todoId)
-                return
-
-            socket.emit('delete-todo', { projectId: this.projectId, todoId: this.todoId })
+        toggleToDo: function (projectId, todoId) {
+            console.log("CLIENTSIDE")
+            console.log(`${projectId} && ${todoId}`)
+            socket.emit('toggle-todo', { projectId: projectId, todoId: todoId })
         },
-        editToDo: function () {
-            if (!this.projectId)
-                return
-            if (!this.todoId)
-                return
-            if (!this.todoName)
-                return
-            if (!this.todoDes)
-                return
-            socket.emit('edit-todo', { projectId: this.projectId, todoId: this.todoId, todoName: this.todoName, todoDes: this.todoDes })
+        collapse: function (projectId) {
+            console.log(projectId);
+            socket.emit('set-active', { projectId: projectId });
         },
-        setActive: function () {
-            if (!this.projectId)
-                return
-            
-            socket.emit('set-active', { projectId: this.projectId})
+        archiveToDo: function(){
+            socket.emit('archive-todo')
+        },
+        archiveProjectToDo: function (projectId){
+            socket.emit('archive-perProject', { projectId: projectId });
         }
     },
     components: {
