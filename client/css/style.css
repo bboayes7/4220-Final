@@ -2,6 +2,7 @@
     width: 100%;
     padding: 0 20px;
 }
+
 .dropdown-item {
     color: red;
 }
@@ -14,27 +15,21 @@
     text-transform: uppercase;
 }
 
+.d-flex {
+    border-width: 2px;
+    border-bottom-style: outset;
+}
+
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity .5s;
 }
 
+.container {
+    margin-top: 215px;
+}
+
 .fade-enter,
 .fade-leave-to {
     opacity: 0;
-}
- 
-.container{
-    margin-top:215px;
-}
-
-.proj-holder {
-    background-color: #f9f9f9;
-    height: 100px;
-    width: 430px;
-    border-radius: 10px;
-}
-
-.proj{
-    margin-top: 15px;
 }

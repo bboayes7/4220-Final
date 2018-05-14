@@ -6,12 +6,11 @@ module.exports = (server) => {
     let projects = []
     const todoArchive = []
     let projectsCounter = 0;//id for projects
-
+    const findProjectIndex = (projectId) => projects.findIndex(project => {
+        return project.id == projectId
+    })
     const findToDoIndex = (projectIndex, toDoId) => projects[projectIndex].todos.findIndex(todo => {
         return todo.id == toDoId
-    })
-    const findProjectIndex = (projectIndex) => projects.findIndex(project => {
-        return project.id == projectIndex
     })
     // when the page is loaded in the browser the connection event is fired
     io.on('connection', socket => {
@@ -73,7 +72,6 @@ module.exports = (server) => {
 
             const projectIndex = findProjectIndex(data.projectId)
             const toDoIndex = findToDoIndex(projectIndex, data.todoId)
-            console.log(toDoIndex)
             projects[projectIndex].todos[toDoIndex].name = data.todoName
             projects[projectIndex].todos[toDoIndex].description = data.todoDes
             projects[projectIndex].todos[toDoIndex].edit = false
@@ -84,17 +82,12 @@ module.exports = (server) => {
         socket.on('toggle-todo', data => {
             const projectIndex = findProjectIndex(data.projectId)
             const toDoIndex = findToDoIndex(projectIndex, data.todoId)
-
-            console.log(`${projectIndex} && ${toDoIndex}`);
-
             if (projects[projectIndex].todos[toDoIndex].completed == false) {
                 projects[projectIndex].todos[toDoIndex].completed = true
             }
             else if (projects[projectIndex].todos[toDoIndex].completed == true) {
                 projects[projectIndex].todos[toDoIndex].completed = false
             }
-            console.log(projects[projectIndex].todos[toDoIndex].completed)
-
             io.emit('refresh-projects', projects)
         })
         socket.on('archive-todo', data => {
@@ -102,7 +95,6 @@ module.exports = (server) => {
             for (let j = 0; j < projectsLength; j++) {
                 const toDoLength = projects[j].todos.length
                 for (let i = 0; i < toDoLength; i++) {
-
                     if (projects[j].todos[i].completed === true) {
                         todoArchive.push(projects[j].todos[i])
                         delete projects[j].todos[i];
@@ -110,7 +102,6 @@ module.exports = (server) => {
                 }
                 projects[j].todos = projects[j].todos.filter(function (n) { return n != undefined });
             }
-
             io.emit('refresh-todoArchive', todoArchive)
             io.emit('refresh-projects', projects)
         })
@@ -118,24 +109,22 @@ module.exports = (server) => {
         socket.on('archive-perProject', data => {
             const projectIndex = findProjectIndex(data.projectId)
             for (let i = 0; i < projects[projectIndex].todos.length; i++) {
-
-                if (projects[projectIndex].todos[i].completed == true) {
+            if (projects[projectIndex].todos[i].completed === true) {
                     todoArchive.push(projects[projectIndex].todos[i])
                     delete projects[projectIndex].todos[i];
                 }
             }
+
             projects[projectIndex].todos = projects[projectIndex].todos.filter(function (n) { return n != undefined });
 
-
+            io.emit('refresh-todoArchive', todoArchive)
             io.emit('refresh-projects', projects)
-            io.emit('refresh-archive', todoArchive)
 
         })
 
         socket.on('set-active', data => {
             const projectIndex = findProjectIndex(data.projectId)
-
-            if (projects[projectIndex].active == false) {
+             if (projects[projectIndex].active == false) {
                 projects.forEach(project => {
                     project.active = false
                 })

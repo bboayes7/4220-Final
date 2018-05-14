@@ -15,7 +15,7 @@ const projectComponent = {
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdown1">
-                              <button class="dropdown-item" type="button" v-on:click="app.archiveToDo()">Archive</button>
+                              <button class="dropdown-item" type="button" v-on:click="app.archiveProjectToDo(data.id)">Archive</button>
                                <button class="dropdown-item" type="button" v-on:click="app.deleteProject(data.id)">Delete Project</button>
                           </div>
                     </div>
@@ -132,7 +132,6 @@ const app = new Vue({
     },
     methods: {
         sendProject: function () {
-            console.log(`projectname : ${this.projectName}`)
             if (!this.projectName)
                 return
 
@@ -145,26 +144,18 @@ const app = new Vue({
             socket.emit('send-todo', { projectId: id, todoName: name, todoDes: des })
         },
         deleteProject: function (id) {
-            console.log("Delete Project")
-            console.log(id)
             socket.emit('delete-project', { projectId: id })
         },
         deleteToDo: function (id, todoId) {
-            console.log(id)
-            console.log(todoId)
             socket.emit('delete-todo', { projectId: id, todoId: todoId })
         },
         editToDo: function (projectId, todoId, todoName, todoDes) {
-
             socket.emit('edit-todo', { projectId: projectId, todoId: todoId, todoName: todoName, todoDes: todoDes })
         },
         toggleToDo: function (projectId, todoId) {
-            console.log("CLIENTSIDE")
-            console.log(`${projectId} && ${todoId}`)
             socket.emit('toggle-todo', { projectId: projectId, todoId: todoId })
         },
         collapse: function (projectId) {
-            console.log(projectId);
             socket.emit('set-active', { projectId: projectId });
         },
         archiveToDo: function () {
