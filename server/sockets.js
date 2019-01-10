@@ -16,7 +16,6 @@ module.exports = (server) => {
     })
     // when the page is loaded in the browser the connection event is fired
     io.on('connection', socket => {
-
         // on making a connection - load in the content already present on the server
         socket.emit('refresh-projects', projects)
         socket.emit('refresh-users', users)
@@ -49,13 +48,14 @@ module.exports = (server) => {
             })
         //on adding a project to server
         socket.on('send-projects', data => {
+            console.log(data)
             const project = {
                 id: projectsCounter,
                 name: data.projectName,
                 date: moment(new Date()).format('MM/DD/YY h:mm a'),
                 todos: [],
                 toDoIdCounter: 0,
-                show: false //To Do task id counter 
+                active: false //To Do task id counter 
             }
             projectsCounter++;
             projects.push(project)
@@ -137,6 +137,16 @@ module.exports = (server) => {
             io.emit('refresh-todoArchive', todoArchive)
 
         })
+        
+        socket.on('set-active', id => {
+            
+            if(projects[id.projectId].active == true){
+                projects[id.projectId].active = false
+            } else{
+                projects[id.projectId].active = true;
+            }
+            io.emit('refresh-projects', projects)
+        })
 
         socket.on('disconnect', () => {
             users = users.filter(user => {
@@ -145,5 +155,7 @@ module.exports = (server) => {
 
             io.emit('refresh-users', users)
         })
+
+
     })
 }

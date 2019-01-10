@@ -126,7 +126,8 @@ const app = new Vue({
         todoName: "",
         todoDes: "",
         todoId: "",
-        alert: false
+        alert: false,
+        active: false
     },
     methods: {
         sendProject: function () {
